@@ -1,0 +1,22 @@
+[
+{
+  "directory": "/home/ndp/Documents/sdcard/build",
+  "command": "/usr/bin/cc   -g   -std=gnu99 -o CMakeFiles/test.dir/test.c.o   -c /home/ndp/Documents/sdcard/test.c",
+  "file": "/home/ndp/Documents/sdcard/test.c"
+},
+{
+  "directory": "/home/ndp/Documents/sdcard/build",
+  "command": "/usr/bin/cc   -g   -std=gnu99 -o CMakeFiles/test.dir/sdcard_util.c.o   -c /home/ndp/Documents/sdcard/sdcard_util.c",
+  "file": "/home/ndp/Documents/sdcard/sdcard_util.c"
+},
+{
+  "directory": "/home/ndp/Documents/sdcard/build",
+  "command": "/usr/bin/cc   -g   -std=gnu99 -o CMakeFiles/main.dir/main.c.o   -c /home/ndp/Documents/sdcard/main.c",
+  "file": "/home/ndp/Documents/sdcard/main.c"
+},
+{
+  "directory": "/home/ndp/Documents/sdcard/build",
+  "command": "/usr/bin/cc   -g   -std=gnu99 -o CMakeFiles/main.dir/sdcard_util.c.o   -c /home/ndp/Documents/sdcard/sdcard_util.c",
+  "file": "/home/ndp/Documents/sdcard/sdcard_util.c"
+}
+]

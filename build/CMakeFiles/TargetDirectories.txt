@@ -1,0 +1,4 @@
+/home/ndp/Documents/sdcard/build/CMakeFiles/rebuild_cache.dir
+/home/ndp/Documents/sdcard/build/CMakeFiles/edit_cache.dir
+/home/ndp/Documents/sdcard/build/CMakeFiles/test.dir
+/home/ndp/Documents/sdcard/build/CMakeFiles/main.dir

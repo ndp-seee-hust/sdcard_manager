@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/home/ndp/Documents/sdcard/sdcard_util.h
+../include/sdcard_util.h
 stdio.h
 -
 stdlib.h
@@ -34,7 +34,39 @@ sys/stat.h
 limits.h
 -
 
-/home/ndp/Documents/sdcard/test.c
+../include/unity.h
+unity_internals.h
+../include/unity_internals.h
+
+../include/unity_internals.h
+unity_config.h
+../include/unity_config.h
+setjmp.h
+-
+math.h
+-
+stddef.h
+-
+stdarg.h
+-
+stdint.h
+-
+limits.h
+-
+sdkddkver.h
+-
+stdnoreturn.h
+-
+stdio.h
+-
+stdio.h
+-
+time.h
+-
+time.h
+-
+
+/home/ndp/Documents/sdcard/unitest/test.c
 stdio.h
 -
 stdlib.h
@@ -43,8 +75,12 @@ string.h
 -
 unistd.h
 -
+pthread.h
+-
 sys/types.h
 -
 sdcard_util.h
-/home/ndp/Documents/sdcard/sdcard_util.h
+/home/ndp/Documents/sdcard/unitest/sdcard_util.h
+unity.h
+/home/ndp/Documents/sdcard/unitest/unity.h
 

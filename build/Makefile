@@ -111,6 +111,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named test_sys
+
+# Build rule for target.
+test_sys: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 test_sys
+.PHONY : test_sys
+
+# fast build rule for target.
+test_sys/fast:
+	$(MAKE) -f CMakeFiles/test_sys.dir/build.make CMakeFiles/test_sys.dir/build
+.PHONY : test_sys/fast
+
+#=============================================================================
 # Target rules for targets named test
 
 # Build rule for target.
@@ -123,102 +136,113 @@ test/fast:
 	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/build
 .PHONY : test/fast
 
-#=============================================================================
-# Target rules for targets named main
+src/sdcard_util.o: src/sdcard_util.c.o
 
-# Build rule for target.
-main: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 main
-.PHONY : main
-
-# fast build rule for target.
-main/fast:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
-.PHONY : main/fast
-
-main.o: main.c.o
-
-.PHONY : main.o
+.PHONY : src/sdcard_util.o
 
 # target to build an object file
-main.c.o:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main.c.o
-.PHONY : main.c.o
+src/sdcard_util.c.o:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/sdcard_util.c.o
+.PHONY : src/sdcard_util.c.o
 
-main.i: main.c.i
+src/sdcard_util.i: src/sdcard_util.c.i
 
-.PHONY : main.i
+.PHONY : src/sdcard_util.i
 
 # target to preprocess a source file
-main.c.i:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main.c.i
-.PHONY : main.c.i
+src/sdcard_util.c.i:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/sdcard_util.c.i
+.PHONY : src/sdcard_util.c.i
 
-main.s: main.c.s
+src/sdcard_util.s: src/sdcard_util.c.s
 
-.PHONY : main.s
+.PHONY : src/sdcard_util.s
 
 # target to generate assembly for a file
-main.c.s:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main.c.s
-.PHONY : main.c.s
+src/sdcard_util.c.s:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/sdcard_util.c.s
+.PHONY : src/sdcard_util.c.s
 
-sdcard_util.o: sdcard_util.c.o
+src/unity.o: src/unity.c.o
 
-.PHONY : sdcard_util.o
+.PHONY : src/unity.o
 
 # target to build an object file
-sdcard_util.c.o:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/sdcard_util.c.o
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/sdcard_util.c.o
-.PHONY : sdcard_util.c.o
+src/unity.c.o:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/unity.c.o
+.PHONY : src/unity.c.o
 
-sdcard_util.i: sdcard_util.c.i
+src/unity.i: src/unity.c.i
 
-.PHONY : sdcard_util.i
+.PHONY : src/unity.i
 
 # target to preprocess a source file
-sdcard_util.c.i:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/sdcard_util.c.i
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/sdcard_util.c.i
-.PHONY : sdcard_util.c.i
+src/unity.c.i:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/unity.c.i
+.PHONY : src/unity.c.i
 
-sdcard_util.s: sdcard_util.c.s
+src/unity.s: src/unity.c.s
 
-.PHONY : sdcard_util.s
+.PHONY : src/unity.s
 
 # target to generate assembly for a file
-sdcard_util.c.s:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/sdcard_util.c.s
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/sdcard_util.c.s
-.PHONY : sdcard_util.c.s
+src/unity.c.s:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/unity.c.s
+.PHONY : src/unity.c.s
 
-test.o: test.c.o
+unitest/test.o: unitest/test.c.o
 
-.PHONY : test.o
+.PHONY : unitest/test.o
 
 # target to build an object file
-test.c.o:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/test.c.o
-.PHONY : test.c.o
+unitest/test.c.o:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/unitest/test.c.o
+.PHONY : unitest/test.c.o
 
-test.i: test.c.i
+unitest/test.i: unitest/test.c.i
 
-.PHONY : test.i
+.PHONY : unitest/test.i
 
 # target to preprocess a source file
-test.c.i:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/test.c.i
-.PHONY : test.c.i
+unitest/test.c.i:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/unitest/test.c.i
+.PHONY : unitest/test.c.i
 
-test.s: test.c.s
+unitest/test.s: unitest/test.c.s
 
-.PHONY : test.s
+.PHONY : unitest/test.s
 
 # target to generate assembly for a file
-test.c.s:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/test.c.s
-.PHONY : test.c.s
+unitest/test.c.s:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/unitest/test.c.s
+.PHONY : unitest/test.c.s
+
+unitest/test_sys.o: unitest/test_sys.c.o
+
+.PHONY : unitest/test_sys.o
+
+# target to build an object file
+unitest/test_sys.c.o:
+	$(MAKE) -f CMakeFiles/test_sys.dir/build.make CMakeFiles/test_sys.dir/unitest/test_sys.c.o
+.PHONY : unitest/test_sys.c.o
+
+unitest/test_sys.i: unitest/test_sys.c.i
+
+.PHONY : unitest/test_sys.i
+
+# target to preprocess a source file
+unitest/test_sys.c.i:
+	$(MAKE) -f CMakeFiles/test_sys.dir/build.make CMakeFiles/test_sys.dir/unitest/test_sys.c.i
+.PHONY : unitest/test_sys.c.i
+
+unitest/test_sys.s: unitest/test_sys.c.s
+
+.PHONY : unitest/test_sys.s
+
+# target to generate assembly for a file
+unitest/test_sys.c.s:
+	$(MAKE) -f CMakeFiles/test_sys.dir/build.make CMakeFiles/test_sys.dir/unitest/test_sys.c.s
+.PHONY : unitest/test_sys.c.s
 
 # Help Target
 help:
@@ -227,18 +251,21 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
+	@echo "... test_sys"
 	@echo "... edit_cache"
 	@echo "... test"
-	@echo "... main"
-	@echo "... main.o"
-	@echo "... main.i"
-	@echo "... main.s"
-	@echo "... sdcard_util.o"
-	@echo "... sdcard_util.i"
-	@echo "... sdcard_util.s"
-	@echo "... test.o"
-	@echo "... test.i"
-	@echo "... test.s"
+	@echo "... src/sdcard_util.o"
+	@echo "... src/sdcard_util.i"
+	@echo "... src/sdcard_util.s"
+	@echo "... src/unity.o"
+	@echo "... src/unity.i"
+	@echo "... src/unity.s"
+	@echo "... unitest/test.o"
+	@echo "... unitest/test.i"
+	@echo "... unitest/test.s"
+	@echo "... unitest/test_sys.o"
+	@echo "... unitest/test_sys.i"
+	@echo "... unitest/test_sys.s"
 .PHONY : help
 
 

@@ -1,1 +1,1 @@
-/usr/bin/cc -g   CMakeFiles/test.dir/test.c.o CMakeFiles/test.dir/sdcard_util.c.o  -o test  -lpthread 
+/usr/bin/cc -g   CMakeFiles/test.dir/src/sdcard_util.c.o CMakeFiles/test.dir/src/unity.c.o CMakeFiles/test.dir/unitest/test.c.o  -o test  -lcurses /usr/lib/x86_64-linux-gnu/libform.so -lpthread 

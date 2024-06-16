@@ -36,6 +36,17 @@ static int sdcard_manager_run_flag = 0;
 /*
  * /dev/mmcblk0p1 /media/mmcblk0p1 vfat rw,relatime,fmask=0000,dmask=0000,allow_utime=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,errors=remount-ro 0 0
  */
+
+void normal2other_callback(void)
+{
+    printf("SD card state changed from normal to other\n");
+}
+
+void other2normal_callback(void)
+{
+    printf("SD card state changed from other to normal\n");
+}
+
 static int find_mount_point(sdcard_manager_t *manager)
 {
     FILE *fp = NULL;
@@ -46,6 +57,7 @@ static int find_mount_point(sdcard_manager_t *manager)
     int blank_count = 0;
     int i = 0;
     long long total, free;
+    long long pre_free_size;
 
     if (strstr(manager->dev_name, "mmcblk") == NULL || manager->partition <= 0)
     {
@@ -79,12 +91,14 @@ static int find_mount_point(sdcard_manager_t *manager)
                     memcpy(manager->mount_path, mount_info + blank_index[0] + 1, blank_index[1] - blank_index[0] - 1);
                     if (strstr(mount_info, "ro,") != NULL)
                     {
+                    
                         manager->state = SDST_BROKEN;
                     }
                     else
                     {
                         if (sdcard_get_size(manager, &total, &free) == 0)
                         {
+                            
                             if (free < 1024 * SDCARD_FULL_FREE)
                             {
                                 manager->state = SDST_FULL;
@@ -358,6 +372,7 @@ sdcard_handle sdcard_util_init(sdcard_cb_p normal2other, sdcard_cb_p other2norma
         return NULL;
     }
 
+
     return (sdcard_handle)manager;
 }
 
@@ -397,17 +412,16 @@ int sdcard_get_size(sdcard_handle handle, long long *total_kb, long long *free_k
 sdcard_state_e sdcard_get_state(sdcard_handle handle)
 {
     sdcard_manager_t *manager = (sdcard_manager_t *)handle;
-
     return manager->state;
 }
 
-void delete_file(char* mount_path) 
+void delete_any_file(char* mount_path) 
 {
 
     DIR *dir;
     struct dirent *entry;
     struct stat file_stat;
-    char filepath[PATH_MAX];
+    char filepath[1000];
     long long file_size = -1; // Biến lưu kích thước của tệp đã xóa
 
     dir = opendir(mount_path);
@@ -448,20 +462,77 @@ void delete_file(char* mount_path)
         }
         else if(S_ISDIR(file_stat.st_mode))
         {
-            delete_file(filepath);
+            delete_any_file(filepath);
         }
             
     }
     closedir(dir);
 }
 
-static int get_sdcard_fs_type(sdcard_manager_t *manager) 
+static char* join_paths(const char* path1, const char* path2) 
 {
+    size_t len1 = strlen(path1);
+    size_t len2 = strlen(path2);
+    char* full_path = (char*)malloc(len1 + len2 + 2); 
+    if (full_path == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    strcpy(full_path, path1);
+    if (path1[len1 - 1] != '/') {
+        strcat(full_path, "/");
+    }
+    strcat(full_path, path2);
+    return full_path;
+}
+
+void delete_file(char* mount_path, char* file_path)
+{
+    struct dirent *entry;
+    DIR *dp;
+    
+    dp = opendir(mount_path);
+    if (dp == NULL) {
+        perror("opendir");
+        exit(1);
+    }
+
+    int file_found_and_deleted = 0;
+    while ((entry = readdir(dp))) {
+        if (strcmp(entry->d_name, file_path) == 0) {
+            char* full_path = join_paths(mount_path, file_path);
+            int result = remove(full_path);
+            if (result == 0) {
+                printf("File deleted successfully: %s\n", full_path);
+                file_found_and_deleted = 1;
+            } else {
+                fprintf(stderr, "Error deleting file %s: %s\n", full_path, strerror(errno));
+            }
+            free(full_path);
+            break;
+        }
+    }
+
+    closedir(dp);
+    
+    if (!file_found_and_deleted) {
+        fprintf(stderr, "File not found: %s\n", file_path);
+        exit(1);
+    }
+}
+
+int get_sdcard_fs_type(sdcard_manager_t *manager) 
+{
+    if(manager->state == SDST_NOT_EXISTS)
+    {
+     return 0;
+    }
+    
     char* mount_path = manager->mount_path;
     char command[256];
     FILE *fp;
 
-    snprintf(command, sizeof(command), "findmnt -n -o FSTYPE %s", mount_path);
+    snprintf(command, sizeof(command), LINUX_GET_FORMAT_COMMAND , mount_path);
     
     fp = popen(command, "r");
     if (fp == NULL) 
@@ -480,19 +551,52 @@ static int get_sdcard_fs_type(sdcard_manager_t *manager)
     pclose(fp);
     return -1;
 }
+uid_t get_uid_using_system()
+{
+    char command[50]; 
+    char buffer[10];  
+
+    
+    strcpy(command, "id -u");
+
+    FILE* fp = popen(command, "r");
+    if (fp == NULL) 
+    {
+        perror("Failed to run command");
+        exit(EXIT_FAILURE);
+    }
+
+    
+    if (fgets(buffer, sizeof(buffer), fp) == NULL) 
+    {
+        perror("Failed to read output of command");
+        exit(EXIT_FAILURE);
+    }
+
+
+    pclose(fp);
+    uid_t uid = atoi(buffer);
+
+    return uid;
+}
 
 int umount_sdcard(const char* dev_path) 
 {
     char command[256];
-    snprintf(command, sizeof(command), "sudo umount %s", dev_path);
-    return system(command);
+    snprintf(command, sizeof(command), LINUX_UMOUNT_COMMAND , dev_path);
+    printf("[SYSTEM] %s\n", command);
+    system(command);
+    return 1;
 }
 
 int mount_sdcard(const char* dev_path, const char* mount_path)
 {
     char command[256];
-    snprintf(command, sizeof(command), "sudo mount %s %s", dev_path, mount_path);
-    return system(command);
+    uid_t uid = get_uid_using_system();
+    snprintf(command, sizeof(command), LINUX_MOUNT_COMMAND , uid, dev_path, mount_path);
+    printf("[SYSTEM] %s\n", command);
+    system(command);
+    return 1;
 }
 
 int format_sdcard(sdcard_handle handle, const char *fs_type) 
@@ -500,28 +604,115 @@ int format_sdcard(sdcard_handle handle, const char *fs_type)
     char dev_path[64] = {0};
     char command[256];
     sdcard_manager_t *manager = (sdcard_manager_t *)handle;
+
+    if(!manager->state == SDST_NORMAL || !manager->state == SDST_FULL)
+    {
+     return 0;
+    }
+
+    char mount_path[64];
+    strcpy(mount_path, manager->mount_path);
+
+    
    
     snprintf(dev_path, sizeof(dev_path), "/dev/%sp%d", manager->dev_name, manager->partition);
     printf("dev path: %s\n", dev_path);
     if(umount_sdcard(dev_path))
     {
         manager->state = SDST_EJECT;
-        printf("SD card eject\n");
+        //printf("After unmount, SD card eject\n");
+    }
+    else
+    {
+        return 0;
     }
 
-    printf("SD card fomatting ...\n");
+    printf("SD CARD FORMATTING ...\n");
     manager->state = SDST_FORMATTING;
-    snprintf(command, sizeof(command), "sudo mkfs.%s %s", fs_type, dev_path);
+    snprintf(command, sizeof(command), LINUX_FORMAT_SD_COMMAND , fs_type, dev_path);
+    printf("[SYSTEM] %s\n", command);
     system(command);
-    sleep(2);
 
-    if(mount_sdcard(dev_path, manager->mount_path))
+    char mkdir_command[256];
+    snprintf(mkdir_command, sizeof(mkdir_command), LINUX_MKDIR_COMMAND , mount_path);
+    printf("[SYSTEM] %s\n", mkdir_command);
+    system(mkdir_command);
+
+    if(mount_sdcard(dev_path, mount_path))
     {
         manager->state = SDST_NORMAL;
-        printf("SD card normal\n");
-        return 1;
+        //printf("After mount, SD card normal\n");
+    }
+    else
+    {
+        return 0;
     }
 
-    return 0;
+    printf("SD CARD FORMAT SUCCESSFULLY!\n");
+    check_sdcard(manager);
+    sleep(2);
+    return 1;
+
+}
+
+void sdcard_openfile(sdcard_handle handle, const char* file_name, const char* mode, char **buffer)
+{
+    sdcard_manager_t *manager = (sdcard_manager_t *)handle;
+    DIR *dp;
+    
+    dp = opendir(manager->mount_path);
+    if (dp == NULL) {
+        perror("opendir");
+        exit(1);
+    }
+
+    char* file_path = join_paths(manager->mount_path, file_name);
+    FILE *file = fopen(file_path, mode);
+    printf("==========> Open %s\n", file_path);
+    manager->state = SDST_FIXING;
+    if (*buffer && (!strcmp (mode, "w") || !strcmp(mode, "wb") || !strcmp(mode, "a")))
+    {
+        printf("==========> Writing into %s ...\n", file_path);
+        fprintf(file, "%s", *buffer);
+    }
+
+    else if (!strcmp(mode, "r") || !strcmp(mode, "rb"))
+    {
+        if(*buffer)
+        {
+            free(*buffer);
+            *buffer = NULL;
+            printf("Free buffer\n");
+        }
+        printf("==========> Reading data from %s into buffer ...\n", file_path);
+
+        fseek(file, 0, SEEK_END);
+        long fileSize = ftell(file);
+        fseek(file, 0, SEEK_SET);
+        
+        
+        *buffer = (char *)malloc(fileSize + 1);
+        if (*buffer == NULL) 
+        {
+            fprintf(stderr, "Unable to allocate memory\n");
+            fclose(file);
+        }
+
+        fread(*buffer, 1, fileSize, file);
+
+        printf("Print buffer to terminal: \n");
+        buffer[fileSize] = '\0';
+        for(int i = 0; i <= fileSize; i++)
+        {
+            char character = (char) *(*buffer+i);
+            printf("%c", character);
+        }
+
+    }
+
+    sleep(3);
+    fclose(file);
+    closedir(dp);
+    printf("==========> Close %s\n", file_path);
 }
 

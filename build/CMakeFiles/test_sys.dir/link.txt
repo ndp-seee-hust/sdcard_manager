@@ -1,0 +1,1 @@
+/usr/bin/cc -g   CMakeFiles/test_sys.dir/unitest/test_sys.c.o  -o test_sys  -lcurses /usr/lib/x86_64-linux-gnu/libform.so -lpthread 

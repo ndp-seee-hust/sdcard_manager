@@ -1,6 +1,7 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/test.dir/sdcard_util.c.o"
-  "CMakeFiles/test.dir/test.c.o"
+  "CMakeFiles/test.dir/src/sdcard_util.c.o"
+  "CMakeFiles/test.dir/src/unity.c.o"
+  "CMakeFiles/test.dir/unitest/test.c.o"
   "test"
   "test.pdb"
 )

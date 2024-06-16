@@ -57,45 +57,62 @@ include CMakeFiles/test.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/test.dir/flags.make
 
-CMakeFiles/test.dir/test.c.o: CMakeFiles/test.dir/flags.make
-CMakeFiles/test.dir/test.c.o: ../test.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ndp/Documents/sdcard/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/test.dir/test.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/test.dir/test.c.o   -c /home/ndp/Documents/sdcard/test.c
+CMakeFiles/test.dir/src/sdcard_util.c.o: CMakeFiles/test.dir/flags.make
+CMakeFiles/test.dir/src/sdcard_util.c.o: ../src/sdcard_util.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ndp/Documents/sdcard/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/test.dir/src/sdcard_util.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/test.dir/src/sdcard_util.c.o   -c /home/ndp/Documents/sdcard/src/sdcard_util.c
 
-CMakeFiles/test.dir/test.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test.dir/test.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/ndp/Documents/sdcard/test.c > CMakeFiles/test.dir/test.c.i
+CMakeFiles/test.dir/src/sdcard_util.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test.dir/src/sdcard_util.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/ndp/Documents/sdcard/src/sdcard_util.c > CMakeFiles/test.dir/src/sdcard_util.c.i
 
-CMakeFiles/test.dir/test.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test.dir/test.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/ndp/Documents/sdcard/test.c -o CMakeFiles/test.dir/test.c.s
+CMakeFiles/test.dir/src/sdcard_util.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test.dir/src/sdcard_util.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/ndp/Documents/sdcard/src/sdcard_util.c -o CMakeFiles/test.dir/src/sdcard_util.c.s
 
-CMakeFiles/test.dir/sdcard_util.c.o: CMakeFiles/test.dir/flags.make
-CMakeFiles/test.dir/sdcard_util.c.o: ../sdcard_util.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ndp/Documents/sdcard/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/test.dir/sdcard_util.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/test.dir/sdcard_util.c.o   -c /home/ndp/Documents/sdcard/sdcard_util.c
+CMakeFiles/test.dir/src/unity.c.o: CMakeFiles/test.dir/flags.make
+CMakeFiles/test.dir/src/unity.c.o: ../src/unity.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ndp/Documents/sdcard/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/test.dir/src/unity.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/test.dir/src/unity.c.o   -c /home/ndp/Documents/sdcard/src/unity.c
 
-CMakeFiles/test.dir/sdcard_util.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test.dir/sdcard_util.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/ndp/Documents/sdcard/sdcard_util.c > CMakeFiles/test.dir/sdcard_util.c.i
+CMakeFiles/test.dir/src/unity.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test.dir/src/unity.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/ndp/Documents/sdcard/src/unity.c > CMakeFiles/test.dir/src/unity.c.i
 
-CMakeFiles/test.dir/sdcard_util.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test.dir/sdcard_util.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/ndp/Documents/sdcard/sdcard_util.c -o CMakeFiles/test.dir/sdcard_util.c.s
+CMakeFiles/test.dir/src/unity.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test.dir/src/unity.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/ndp/Documents/sdcard/src/unity.c -o CMakeFiles/test.dir/src/unity.c.s
+
+CMakeFiles/test.dir/unitest/test.c.o: CMakeFiles/test.dir/flags.make
+CMakeFiles/test.dir/unitest/test.c.o: ../unitest/test.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ndp/Documents/sdcard/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/test.dir/unitest/test.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/test.dir/unitest/test.c.o   -c /home/ndp/Documents/sdcard/unitest/test.c
+
+CMakeFiles/test.dir/unitest/test.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test.dir/unitest/test.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/ndp/Documents/sdcard/unitest/test.c > CMakeFiles/test.dir/unitest/test.c.i
+
+CMakeFiles/test.dir/unitest/test.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test.dir/unitest/test.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/ndp/Documents/sdcard/unitest/test.c -o CMakeFiles/test.dir/unitest/test.c.s
 
 # Object files for target test
 test_OBJECTS = \
-"CMakeFiles/test.dir/test.c.o" \
-"CMakeFiles/test.dir/sdcard_util.c.o"
+"CMakeFiles/test.dir/src/sdcard_util.c.o" \
+"CMakeFiles/test.dir/src/unity.c.o" \
+"CMakeFiles/test.dir/unitest/test.c.o"
 
 # External object files for target test
 test_EXTERNAL_OBJECTS =
 
-test: CMakeFiles/test.dir/test.c.o
-test: CMakeFiles/test.dir/sdcard_util.c.o
+test: CMakeFiles/test.dir/src/sdcard_util.c.o
+test: CMakeFiles/test.dir/src/unity.c.o
+test: CMakeFiles/test.dir/unitest/test.c.o
 test: CMakeFiles/test.dir/build.make
+test: /usr/lib/x86_64-linux-gnu/libcurses.so
+test: /usr/lib/x86_64-linux-gnu/libform.so
 test: CMakeFiles/test.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/ndp/Documents/sdcard/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking C executable test"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/ndp/Documents/sdcard/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking C executable test"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/test.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

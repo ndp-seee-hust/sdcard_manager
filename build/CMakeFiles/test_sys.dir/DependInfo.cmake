@@ -4,9 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "/home/ndp/Documents/sdcard/src/sdcard_util.c" "/home/ndp/Documents/sdcard/build/CMakeFiles/test.dir/src/sdcard_util.c.o"
-  "/home/ndp/Documents/sdcard/src/unity.c" "/home/ndp/Documents/sdcard/build/CMakeFiles/test.dir/src/unity.c.o"
-  "/home/ndp/Documents/sdcard/unitest/test.c" "/home/ndp/Documents/sdcard/build/CMakeFiles/test.dir/unitest/test.c.o"
+  "/home/ndp/Documents/sdcard/unitest/test_sys.c" "/home/ndp/Documents/sdcard/build/CMakeFiles/test_sys.dir/unitest/test_sys.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 

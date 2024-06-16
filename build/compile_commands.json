@@ -1,22 +1,22 @@
 [
 {
   "directory": "/home/ndp/Documents/sdcard/build",
-  "command": "/usr/bin/cc   -g   -std=gnu99 -o CMakeFiles/test.dir/test.c.o   -c /home/ndp/Documents/sdcard/test.c",
-  "file": "/home/ndp/Documents/sdcard/test.c"
+  "command": "/usr/bin/cc  -I/home/ndp/Documents/sdcard/include  -g   -std=gnu99 -o CMakeFiles/test_sys.dir/unitest/test_sys.c.o   -c /home/ndp/Documents/sdcard/unitest/test_sys.c",
+  "file": "/home/ndp/Documents/sdcard/unitest/test_sys.c"
 },
 {
   "directory": "/home/ndp/Documents/sdcard/build",
-  "command": "/usr/bin/cc   -g   -std=gnu99 -o CMakeFiles/test.dir/sdcard_util.c.o   -c /home/ndp/Documents/sdcard/sdcard_util.c",
-  "file": "/home/ndp/Documents/sdcard/sdcard_util.c"
+  "command": "/usr/bin/cc  -I/home/ndp/Documents/sdcard/include  -g   -std=gnu99 -o CMakeFiles/test.dir/src/sdcard_util.c.o   -c /home/ndp/Documents/sdcard/src/sdcard_util.c",
+  "file": "/home/ndp/Documents/sdcard/src/sdcard_util.c"
 },
 {
   "directory": "/home/ndp/Documents/sdcard/build",
-  "command": "/usr/bin/cc   -g   -std=gnu99 -o CMakeFiles/main.dir/main.c.o   -c /home/ndp/Documents/sdcard/main.c",
-  "file": "/home/ndp/Documents/sdcard/main.c"
+  "command": "/usr/bin/cc  -I/home/ndp/Documents/sdcard/include  -g   -std=gnu99 -o CMakeFiles/test.dir/src/unity.c.o   -c /home/ndp/Documents/sdcard/src/unity.c",
+  "file": "/home/ndp/Documents/sdcard/src/unity.c"
 },
 {
   "directory": "/home/ndp/Documents/sdcard/build",
-  "command": "/usr/bin/cc   -g   -std=gnu99 -o CMakeFiles/main.dir/sdcard_util.c.o   -c /home/ndp/Documents/sdcard/sdcard_util.c",
-  "file": "/home/ndp/Documents/sdcard/sdcard_util.c"
+  "command": "/usr/bin/cc  -I/home/ndp/Documents/sdcard/include  -g   -std=gnu99 -o CMakeFiles/test.dir/unitest/test.c.o   -c /home/ndp/Documents/sdcard/unitest/test.c",
+  "file": "/home/ndp/Documents/sdcard/unitest/test.c"
 }
 ]

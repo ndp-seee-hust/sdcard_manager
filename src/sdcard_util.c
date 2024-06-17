@@ -19,17 +19,19 @@
 
 #define SDCARD_FULL_FREE 50 // Less than 50M is defined as full
 
-// typedef struct
-// {
-//     struct sockaddr_nl sa;
-//     int sock_fd;
-//     sdcard_cb_p normal2other;
-//     sdcard_cb_p other2normal;
-//     int partition;
-//     sdcard_state_e state;
-//     char dev_name[16];
-//     char mount_path[64];
-// } sdcard_manager_t;
+typedef struct
+{
+    struct sockaddr_nl sa;
+    int sock_fd;
+    sdcard_cb_p normal2other;
+    sdcard_cb_p other2normal;
+    int partition;
+    sdcard_state_e state;
+    char dev_name[16];
+    char mount_path[64];
+    char format_type[32];
+} sdcard_manager_t;
+
 
 static int sdcard_manager_run_flag = 0;
 
@@ -47,7 +49,7 @@ void other2normal_callback(void)
     printf("SD card state changed from other to normal\n");
 }
 
-static int find_mount_point(sdcard_manager_t *manager)
+static int sdcard_get_mount_path(sdcard_manager_t *manager)
 {
     FILE *fp = NULL;
     char dev_path[64] = {0};
@@ -125,13 +127,14 @@ static int find_mount_point(sdcard_manager_t *manager)
     return 0;
 }
 
-static int check_sdcard(sdcard_manager_t *manager)
+static int sdcard_get_dev_name(sdcard_manager_t *manager)
 {
+        
     struct dirent *entry;
     char *dev_name = NULL;
     DIR *dir = NULL;
     char block_path[64] = {0};
-    int ret = 0;
+    
 
     memset(manager->dev_name, 0, sizeof(manager->dev_name));
     memset(manager->mount_path, 0, sizeof(manager->mount_path));
@@ -194,16 +197,65 @@ static int check_sdcard(sdcard_manager_t *manager)
         }
     }
 
-   
+    return 0;
 
+   
+}
+
+int sdcard_get_format(sdcard_handle handle) 
+{
+    sdcard_manager_t *manager = (sdcard_manager_t *)handle;
+    if(manager->state == SDST_NOT_EXISTS)
+    {
+     return -1;
+    }
+    
+    char* mount_path = manager->mount_path;
+    char command[256];
+    FILE *fp;
+
+    snprintf(command, sizeof(command), LINUX_GET_FORMAT_COMMAND , mount_path);
+    
+    fp = popen(command, "r");
+    if (fp == NULL) 
+    {
+        perror("popen");
+        return -1;
+    }
+
+    if (fgets(manager->format_type, sizeof(manager->format_type), fp) != NULL) 
+    {
+        manager->format_type[strcspn(manager->format_type, "\n")] = 0; // Remove newline character
+        pclose(fp);
+        return 0;
+    }
+    
+    pclose(fp);
+    return -1;
+}
+
+static int check_sdcard(sdcard_manager_t *manager)
+{
+
+    int ret = 0;
+    ret = sdcard_get_dev_name(manager);
+    if(ret < 0)
+    {
+        return -1;
+    }
     if (manager->partition != -1)
     {
-        ret = find_mount_point(manager);
-        get_sdcard_fs_type(manager);
-        
+        ret = sdcard_get_mount_path(manager);
         if (ret < 0)
         {
             manager->state = SDST_EJECT;
+        }
+
+        ret = sdcard_get_format(manager);
+        if (ret < 0)
+        {
+            manager->state = SDST_NOT_EXISTS;
+            return -1;
         }
         sleep(2);
         printf("---------------------------------------\n");
@@ -297,7 +349,7 @@ static void *sdcard_mount_monitor(void *arg)
 
     while(sdcard_manager_run_flag)
     {
-        ret = find_mount_point(manager);
+        ret = sdcard_get_mount_path(manager);
         if (manager->state != pre_state)
         {
             printf("sdcard state change from %d to %d\n", pre_state, manager->state);
@@ -415,60 +467,6 @@ sdcard_state_e sdcard_get_state(sdcard_handle handle)
     return manager->state;
 }
 
-void delete_any_file(char* mount_path) 
-{
-
-    DIR *dir;
-    struct dirent *entry;
-    struct stat file_stat;
-    char filepath[1000];
-    long long file_size = -1; // Biến lưu kích thước của tệp đã xóa
-
-    dir = opendir(mount_path);
-    if (dir == NULL) 
-    {
-        perror("opendir");
-    }
-
-    while ((entry = readdir(dir)) != NULL) 
-    {
-        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) 
-        {
-            continue;
-        }
-
-        snprintf(filepath, sizeof(filepath), "%s/%s", mount_path, entry->d_name);
-
-        if (stat(filepath, &file_stat) == -1) 
-        {
-            perror("stat");
-            continue;
-        }
-
-        if (S_ISREG(file_stat.st_mode)) 
-        {
-            file_size = file_stat.st_size;
-
-            if (remove(filepath) == 0) 
-            {
-                printf("Successfully deleted file: %s, file size: %lld MB\n", filepath, file_size/(1024*1024));
-            } 
-            else 
-            {
-                perror("Error deleting the file");
-                file_size = -1; 
-            }
-            break; 
-        }
-        else if(S_ISDIR(file_stat.st_mode))
-        {
-            delete_any_file(filepath);
-        }
-            
-    }
-    closedir(dir);
-}
-
 static char* join_paths(const char* path1, const char* path2) 
 {
     size_t len1 = strlen(path1);
@@ -486,24 +484,37 @@ static char* join_paths(const char* path1, const char* path2)
     return full_path;
 }
 
-void delete_file(char* mount_path, char* file_path)
+int sdcard_delete_file(sdcard_handle handle, char* file_name)
 {
+    int ret = 0;
+    if(file_name == NULL)
+    {
+        return -1;
+    }
+
+    sdcard_manager_t *manager = (sdcard_manager_t *)handle;
+    ret = sdcard_get_mount_path(manager);
+    if(ret < 0)
+    {
+        return -1;
+    }
+
     struct dirent *entry;
     DIR *dp;
     
-    dp = opendir(mount_path);
+    dp = opendir(manager->mount_path);
     if (dp == NULL) {
         perror("opendir");
-        exit(1);
+        return -1;
     }
 
     int file_found_and_deleted = 0;
     while ((entry = readdir(dp))) {
-        if (strcmp(entry->d_name, file_path) == 0) {
-            char* full_path = join_paths(mount_path, file_path);
+        if (strcmp(entry->d_name, file_name) == 0) {
+            char* full_path = join_paths(manager->mount_path, file_name);
             int result = remove(full_path);
             if (result == 0) {
-                printf("File deleted successfully: %s\n", full_path);
+                printf("==========> File deleted successfully: %s\n", full_path);
                 file_found_and_deleted = 1;
             } else {
                 fprintf(stderr, "Error deleting file %s: %s\n", full_path, strerror(errno));
@@ -516,42 +527,15 @@ void delete_file(char* mount_path, char* file_path)
     closedir(dp);
     
     if (!file_found_and_deleted) {
-        fprintf(stderr, "File not found: %s\n", file_path);
-        exit(1);
+        fprintf(stderr, "File not found: %s\n", file_name);
+        return -1;
     }
+
+    return 0;
 }
 
-int get_sdcard_fs_type(sdcard_manager_t *manager) 
-{
-    if(manager->state == SDST_NOT_EXISTS)
-    {
-     return 0;
-    }
-    
-    char* mount_path = manager->mount_path;
-    char command[256];
-    FILE *fp;
 
-    snprintf(command, sizeof(command), LINUX_GET_FORMAT_COMMAND , mount_path);
-    
-    fp = popen(command, "r");
-    if (fp == NULL) 
-    {
-        perror("popen");
-        exit(1);
-    }
-
-    if (fgets(manager->format_type, sizeof(manager->format_type), fp) != NULL) 
-    {
-        manager->format_type[strcspn(manager->format_type, "\n")] = 0; // Remove newline character
-        pclose(fp);
-        return 1;
-    }
-    
-    pclose(fp);
-    return -1;
-}
-uid_t get_uid_using_system()
+static uid_t sdcard_get_uid_using_system()
 {
     char command[50]; 
     char buffer[10];  
@@ -580,7 +564,7 @@ uid_t get_uid_using_system()
     return uid;
 }
 
-int umount_sdcard(const char* dev_path) 
+static int sdcard_umount(const char* dev_path) 
 {
     char command[256];
     snprintf(command, sizeof(command), LINUX_UMOUNT_COMMAND , dev_path);
@@ -589,10 +573,10 @@ int umount_sdcard(const char* dev_path)
     return 1;
 }
 
-int mount_sdcard(const char* dev_path, const char* mount_path)
+static int sdcard_mount(const char* dev_path, const char* mount_path)
 {
     char command[256];
-    uid_t uid = get_uid_using_system();
+    uid_t uid = sdcard_get_uid_using_system();
     snprintf(command, sizeof(command), LINUX_MOUNT_COMMAND , uid, dev_path, mount_path);
     printf("[SYSTEM] %s\n", command);
     system(command);
@@ -603,32 +587,34 @@ int format_sdcard(sdcard_handle handle, const char *fs_type)
 {
     char dev_path[64] = {0};
     char command[256];
+    int ret = 0;
+
     sdcard_manager_t *manager = (sdcard_manager_t *)handle;
 
     if(!manager->state == SDST_NORMAL || !manager->state == SDST_FULL)
     {
-     return 0;
+     printf("Can't format SD card!");
+     return -1;
     }
 
     char mount_path[64];
     strcpy(mount_path, manager->mount_path);
-
-    
-   
     snprintf(dev_path, sizeof(dev_path), "/dev/%sp%d", manager->dev_name, manager->partition);
     printf("dev path: %s\n", dev_path);
-    if(umount_sdcard(dev_path))
+
+    if(sdcard_umount(dev_path))
     {
         manager->state = SDST_EJECT;
         //printf("After unmount, SD card eject\n");
     }
     else
     {
-        return 0;
+        return -1;
     }
 
     printf("SD CARD FORMATTING ...\n");
     manager->state = SDST_FORMATTING;
+
     snprintf(command, sizeof(command), LINUX_FORMAT_SD_COMMAND , fs_type, dev_path);
     printf("[SYSTEM] %s\n", command);
     system(command);
@@ -638,24 +624,24 @@ int format_sdcard(sdcard_handle handle, const char *fs_type)
     printf("[SYSTEM] %s\n", mkdir_command);
     system(mkdir_command);
 
-    if(mount_sdcard(dev_path, mount_path))
+    if(sdcard_mount(dev_path, mount_path))
     {
         manager->state = SDST_NORMAL;
         //printf("After mount, SD card normal\n");
     }
     else
     {
-        return 0;
+        return -1;
     }
 
     printf("SD CARD FORMAT SUCCESSFULLY!\n");
     check_sdcard(manager);
     sleep(2);
-    return 1;
+    return 0;
 
 }
 
-void sdcard_openfile(sdcard_handle handle, const char* file_name, const char* mode, char **buffer)
+int sdcard_write_file(sdcard_handle handle, char* file_name, char* mode, char **buffer)
 {
     sdcard_manager_t *manager = (sdcard_manager_t *)handle;
     DIR *dp;
@@ -663,21 +649,68 @@ void sdcard_openfile(sdcard_handle handle, const char* file_name, const char* mo
     dp = opendir(manager->mount_path);
     if (dp == NULL) {
         perror("opendir");
-        exit(1);
+        return -1;
+    }
+
+    if(file_name == NULL)
+    {
+        return -1;
     }
 
     char* file_path = join_paths(manager->mount_path, file_name);
-    FILE *file = fopen(file_path, mode);
-    printf("==========> Open %s\n", file_path);
+    
     manager->state = SDST_FIXING;
+
     if (*buffer && (!strcmp (mode, "w") || !strcmp(mode, "wb") || !strcmp(mode, "a")))
     {
+        FILE *file = fopen(file_path, mode);
+
+        if (file == NULL) 
+        {
+            perror("Error opening file");
+            return -1;
+        }
+
+        printf("==========> Open %s\n", file_path);
         printf("==========> Writing into %s ...\n", file_path);
         fprintf(file, "%s", *buffer);
+        fclose(file);
+        printf("==========> Close %s\n", file_path);
+        closedir(dp);
+        return 0;
+    }
+    
+    return -1;
+}
+
+int sdcard_read_file(sdcard_handle handle, char* file_name, char* mode, char ** buffer)
+{
+    sdcard_manager_t *manager = (sdcard_manager_t *)handle;
+    DIR *dp;
+    
+    dp = opendir(manager->mount_path);
+    if (dp == NULL) {
+        perror("opendir");
+        return -1;
     }
 
-    else if (!strcmp(mode, "r") || !strcmp(mode, "rb"))
+    if(file_name == NULL)
     {
+        return -1;
+    }
+
+    char* file_path = join_paths(manager->mount_path, file_name);
+    manager->state = SDST_FIXING;
+
+    if (!strcmp(mode, "r") || !strcmp(mode, "rb"))
+    {
+        FILE *file = fopen(file_path, mode);
+        if (file == NULL) 
+        {
+            perror("Error opening file");
+            return -1;
+        }
+
         if(*buffer)
         {
             free(*buffer);
@@ -708,11 +741,14 @@ void sdcard_openfile(sdcard_handle handle, const char* file_name, const char* mo
             printf("%c", character);
         }
 
-    }
+        fclose(file);
+        printf("==========> Close %s\n", file_path);
 
-    sleep(3);
-    fclose(file);
-    closedir(dp);
-    printf("==========> Close %s\n", file_path);
+        closedir(dp);
+        return 0;
+    }    
+
+    return -1;
+
 }
 

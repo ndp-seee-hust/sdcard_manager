@@ -41,18 +41,6 @@ typedef enum
     SDST_EJECTING    //7
 } sdcard_state_e;
 
-typedef struct
-{
-    struct sockaddr_nl sa;
-    int sock_fd;
-    sdcard_cb_p normal2other;
-    sdcard_cb_p other2normal;
-    int partition;
-    sdcard_state_e state;
-    char dev_name[16];
-    char mount_path[64];
-    char format_type[32];
-} sdcard_manager_t;
 
 void normal2other_callback(void);
 
@@ -63,14 +51,12 @@ int sdcard_get_size(sdcard_handle handle, long long *total_kb, long long *free_k
 sdcard_state_e sdcard_get_state(sdcard_handle handle);
 void sdcard_util_deinit(sdcard_handle handle);
 
-void delete_any_file(char* mount_path);
-void delete_file(char* mount_path, char* file_path);
-int get_sdcard_fs_type(sdcard_manager_t *manager);
-uid_t get_uid_using_system();
-int umount_sdcard(const char* dev_path);
-int mount_sdcard(const char * dev_path, const char* mount_path);
+int sdcard_delete_file(sdcard_handle handle, char* file_name);
+int sdcard_get_format(sdcard_handle handle);
+
 int format_sdcard(sdcard_handle handle, const char *fs_type);
-void sdcard_openfile(sdcard_handle handle, const char* file_name, const char* mode, char **buffer);
+int sdcard_write_file(sdcard_handle handle, char* file_name, char* mode, char **buffer);
+int sdcard_read_file(sdcard_handle handle, char* file_name, char* mode, char **buffer);
 
 
 #ifdef __cplusplus

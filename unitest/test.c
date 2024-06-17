@@ -11,9 +11,6 @@ char *BUFFER = NULL;
 const char* file_output = "/home/ndp/output_test.txt";
 
 
-#define WRITE_FILE_TEST 0
-#define READ_FILE_TEST 1
-
 void setUp(void) 
 {
     //
@@ -25,7 +22,7 @@ void tearDown(void)
 }
 void push_data_to_buffer(char **buffer) 
 {
-    for (int i = 0; i <= 30; i++) 
+    for (int i = 0; i <= 10; i++) 
     {
         char line[20]; 
         snprintf(line, sizeof(line), "test %d\n", i);
@@ -77,19 +74,19 @@ void *readInput(void *arg)
         {
             format_sdcard(handle, "vfat"); 
         }
-        else if (input == 'O' || input == 'o')
+        else if (input == 'W' || input == 'w')
         {
-            if(WRITE_FILE_TEST) 
-            {
-                push_data_to_buffer(&BUFFER);
-            }
-
-            sdcard_openfile(handle, "test.txt", "r", &BUFFER);
-
-            if(READ_FILE_TEST)
-            {
-                write_buffer_to_file(file_output, "w", BUFFER);
-            }
+            push_data_to_buffer(&BUFFER);
+            sdcard_write_file(handle, "test.txt", "w", &BUFFER);
+        }
+        else if (input == 'R' || input == 'r')
+        {
+            sdcard_read_file(handle, "test.txt", "r", &BUFFER);
+            write_buffer_to_file(file_output, "w", BUFFER);
+        }
+        else if (input == 'D' || input == 'd')
+        {
+            sdcard_delete_file(handle, "test.txt");
         }
         
     }
@@ -99,7 +96,6 @@ void *readInput(void *arg)
 void *check_sd_card(void *arg)
 {
     sdcard_handle handle = *(sdcard_handle *)arg;
-    sdcard_manager_t *manager = (sdcard_manager_t *)handle;
     long long total_kb, free_kb;
     while(1) 
     {
@@ -122,7 +118,7 @@ void *check_sd_card(void *arg)
                 break;
             case SDST_FULL:
                 printf("SD card full\n");
-                delete_any_file(manager->mount_path);
+                sdcard_delete_file(handle, "test.txt");
                 break;
             case SDST_BROKEN:
                 printf("SD card broken\n");

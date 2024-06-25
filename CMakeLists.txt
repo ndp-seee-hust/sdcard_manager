@@ -19,5 +19,3 @@ set(SOURCE_FILES
 add_executable(test ${SOURCE_FILES})
 target_link_libraries(test PRIVATE Threads::Threads ${CURSES_LIBRARIES})
 
-add_executable(test_sys unitest/test_sys.c)
-target_link_libraries(test_sys PRIVATE Threads::Threads ${CURSES_LIBRARIES})

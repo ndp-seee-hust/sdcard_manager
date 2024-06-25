@@ -472,12 +472,14 @@ static char* join_paths(const char* path1, const char* path2)
     size_t len1 = strlen(path1);
     size_t len2 = strlen(path2);
     char* full_path = (char*)malloc(len1 + len2 + 2); 
-    if (full_path == NULL) {
+    if (full_path == NULL) 
+    {
         fprintf(stderr, "Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
     strcpy(full_path, path1);
-    if (path1[len1 - 1] != '/') {
+    if (path1[len1 - 1] != '/') 
+    {
         strcat(full_path, "/");
     }
     strcat(full_path, path2);
@@ -509,14 +511,19 @@ int sdcard_delete_file(sdcard_handle handle, char* file_name)
     }
 
     int file_found_and_deleted = 0;
-    while ((entry = readdir(dp))) {
-        if (strcmp(entry->d_name, file_name) == 0) {
+    while ((entry = readdir(dp))) 
+    {
+        if (strcmp(entry->d_name, file_name) == 0) 
+        {
             char* full_path = join_paths(manager->mount_path, file_name);
             int result = remove(full_path);
-            if (result == 0) {
+            if (result == 0) 
+            {
                 printf("==========> File deleted successfully: %s\n", full_path);
                 file_found_and_deleted = 1;
-            } else {
+            } 
+            else 
+            {
                 fprintf(stderr, "Error deleting file %s: %s\n", full_path, strerror(errno));
             }
             free(full_path);
@@ -526,7 +533,8 @@ int sdcard_delete_file(sdcard_handle handle, char* file_name)
 
     closedir(dp);
     
-    if (!file_found_and_deleted) {
+    if (!file_found_and_deleted) 
+    {
         fprintf(stderr, "File not found: %s\n", file_name);
         return -1;
     }
